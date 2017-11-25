@@ -1,7 +1,7 @@
 // This script will create the context menu for the extension.
-chrome.contextMenus.removeAll();
+browser.contextMenus.removeAll();
 
-chrome.contextMenus.create({
+browser.contextMenus.create({
   id: "radioLocal",
   type: "radio",
   title: "Local URL",
@@ -11,7 +11,7 @@ chrome.contextMenus.create({
   }
 });
 
-chrome.contextMenus.create({
+browser.contextMenus.create({
   id: "radioRemote",
   type: "radio",
   title: "Remote URL",
@@ -21,21 +21,11 @@ chrome.contextMenus.create({
   }
 });
 
-chrome.contextMenus.create({
-  id: "radioOptions",
-  type: "normal",
-  title: "Options",
-  contexts: ["browser_action"],
-  onclick: function() {
-    localStorage["active_server_id"] = localStorage["remote_server_id"];
-  }
-});
-
 // Checks the Local URL radio on the context menu
-chrome.contextMenus.update("radioRemote", {
+browser.contextMenus.update("radioRemote", {
   checked: false
 });
-chrome.contextMenus.update("radioLocal", {
+browser.contextMenus.update("radioLocal", {
   checked: true
 });
 localStorage["active_server_id"] = localStorage["local_server_id"];
