@@ -4,7 +4,7 @@
   "name": "openHAB Controller",
   "short_name": "openHAB Controller",
   "description": "Control your home from anywhere using your openHAB sitemap and Firefox!",
-  "version": "0.1",
+  "version": "0.1.1",
 
   "background": {
     "scripts": ["js/context-menu.js"]
