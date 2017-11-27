@@ -4,7 +4,12 @@
   "name": "openHAB Controller",
   "short_name": "openHAB Controller",
   "description": "Control your home from anywhere using your openHAB sitemap and Firefox!",
-  "version": "0.1.2",
+  "version": "0.2",
+  "applications": {
+    "gecko": {
+      "id": "openhab-controller@lcoord.net"
+    }
+  },
 
   "icons": {
     "16": "icons/icon16.png",
@@ -17,7 +22,8 @@
   },
 
   "options_ui": {
-    "page": "html/internalOptions.html"
+    "page": "html/options.html",
+    "browser_style": true
   },
 
   "browser_action": {

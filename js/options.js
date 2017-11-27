@@ -1,66 +1,55 @@
-// Saves options to localStorage.
-function save_options() {
-  localStorage["local_server_id"] = $("#localserverid").val();
-  localStorage["remote_server_id"] = $("#remoteserverid").val();
-  localStorage["path_id"] = "/basicui/app";
-  localStorage["width_id"] = $("#widthid").val();
-  localStorage["height_id"] = $("#heightid").val();
+const DEFAULT_MYOPENHAB_URL = "https://home.myopenhab.org";
+const DEFAULT_BASICUI_PATH = "/basicui/app";
+const DEFAULT_WIDTH = 450;
+const DEFAULT_HEIGHT = 500;
 
-  // Checks the Local URL radio on the context menu
-  chrome.contextMenus.update("radioRemote", {
-    checked: false
-  });
-  chrome.contextMenus.update("radioLocal", {
-    checked: true
-  });
-  localStorage["active_server_id"] = localStorage["local_server_id"];
+let localServerSync = browser.storage.sync.get('localServer');
+let remoteServerSync = browser.storage.sync.get('remoteServer');
+let basicUiSync = browser.storage.sync.get('basicUi');
 
-	// Update status to let user know options were saved.
-	$("#status").css({
-        'visibility': 'visible'
-    }),
-	setTimeout(function() {
-		$("#status").html("");
-	}, 2000);
+let widthSync = browser.storage.sync.get('width');
+let heightSync = browser.storage.sync.get('height');
+
+let remoteActiveSync = browser.storage.sync.get('remoteActive');
+
+function saveOptions(e) {
+  browser.storage.sync.set({
+    localServer: document.querySelector("#localServer").value,
+    remoteServer: document.querySelector("#remoteServer").value,
+    basicUi: document.querySelector("#basicUi").value,
+    width: document.querySelector("#width").value,
+    height: document.querySelector("#height").value,
+  });
+  e.preventDefault();
 }
 
-function saveInternalOptions() {
-  localStorage["path_id"] = $("#pathid").val();
-}
+function restoreOptions() {
+  console.log("restoring options");
 
-// Restores select box state to saved value from localStorage.
-function restore_options() {
-  var local_server_id = localStorage["local_server_id"];
-  var remote_server_id = localStorage["remote_server_id"];
-  var path_id = localStorage["path_id"];
-  var width_id = localStorage["width_id"];
-  var height_id = localStorage["height_id"];
-
-  if(local_server_id){
-    $("#localserverid").val(local_server_id);
-  }
-  if (remote_server_id) {
-    $("#remoteserverid").val(remote_server_id);
-  }
-  if(path_id){
-    $("#pathid").val(path_id);
-  }
-  if(width_id){
-    $("#widthid").val(width_id);
-  }
-  if(height_id){
-    $("#heightid").val(height_id);
-  }
-}
-
-$(document).ready(function(){
-	restore_options();
-
-	$("#saveButton").click(function(){
-		save_options();
-	}),
-  $("#internalOptionsSave").click(function(){
-    save_options();
-    saveInternalOptions();
+  localServerSync.then((res) => {
+    document.querySelector("#localServer").value = res.localServer || null;
   });
-});
+
+  remoteServerSync.then((res) => {
+    document.querySelector("#remoteServer").value = res.remoteServer || DEFAULT_MYOPENHAB_URL;
+  });
+
+  basicUiSync.then((res) => {
+    document.querySelector("#basicUi").value = res.basicUi || DEFAULT_BASICUI_PATH;
+  });
+
+  widthSync.then((res) => {
+    document.querySelector("#width").value = res.width || DEFAULT_WIDTH;
+    console.log(res.width);
+  });
+
+  heightSync.then((res) => {
+    document.querySelector("#height").value = res.height || DEFAULT_HEIGHT;
+  });
+}
+
+document.addEventListener('DOMContentLoaded', restoreOptions);
+document.querySelector("form").addEventListener("submit", saveOptions);
+
+
+
