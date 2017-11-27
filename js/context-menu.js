@@ -7,7 +7,9 @@ browser.contextMenus.create({
   title: "Local URL",
   contexts: ["browser_action"],
   onclick: function() {
-    localStorage["active_server_id"] = localStorage["local_server_id"];
+    browser.storage.sync.set({
+      remoteActive: false
+    });
   }
 });
 
@@ -17,15 +19,19 @@ browser.contextMenus.create({
   title: "Remote URL",
   contexts: ["browser_action"],
   onclick: function() {
-    localStorage["active_server_id"] = localStorage["remote_server_id"];
+    browser.storage.sync.set({
+      remoteActive: true
+    });
   }
 });
 
-// Checks the Local URL radio on the context menu
-browser.contextMenus.update("radioRemote", {
-  checked: false
+browser.contextMenus.create({
+  id: "options",
+  type: "normal",
+  title: "Options",
+  contexts: ["browser_action"],
+  onclick: function handleClick() {
+    browser.runtime.openOptionsPage();
+  }
 });
-browser.contextMenus.update("radioLocal", {
-  checked: true
-});
-localStorage["active_server_id"] = localStorage["local_server_id"];
+

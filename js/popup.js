@@ -1,12 +1,31 @@
 document.addEventListener('DOMContentLoaded',
-  function applysettings() {
-    if (!localStorage["local_server_id"]) {
-      document.getElementById('setup').innerHTML = '<h3 style="padding:20px;">You need to <a href="options.html">Setup</a> the extension first.</h3>';
-    }
-    else {
-      document.getElementById('MyFrameContainer').innerHTML = '<iframe style="border:none;" src="' + localStorage["active_server_id"] + localStorage["path_id"] + '" width=450px; height=500px></iframe>';
-      document.getElementById('body').style.width = localStorage["width_id"];
-      document.getElementById('body').style.height = localStorage["height_id"];
-    }
+  function load() {
+  const basicUiSync = browser.storage.sync.get('basicUi');
+  const remoteServerSync = browser.storage.sync.get('remoteServer');
+  const localServerSync = browser.storage.sync.get('localServer');
+  const widthSync = browser.storage.sync.get('width');
+  const heightSync = browser.storage.sync.get('height');
+  const remoteActiveSync = browser.storage.sync.get('remoteActive');
+  let window = document.getElementById('frameContainer');
+
+    //Move into promise chain, until all variables are resolved and are ready to be injected into the iframe.
+    remoteServerSync.then((remoteServerPromise) => {
+      basicUiSync.then((basicUiPromise) => {
+        widthSync.then((widthPromise) => {
+          heightSync.then((heightPromise) => {
+            remoteActiveSync.then((remoteActivePromise) => {
+              if(remoteActivePromise.remoteActive){
+                window.innerHTML = `<iframe style="border:none;" src="${remoteServerPromise.remoteServer}${basicUiPromise.basicUi}" width="${widthPromise.width + ''}"px height="${heightPromise.height + ''}"px></iframe>`;
+              }
+              else{
+                localServerSync.then((localServerPromise) => {
+                  window.innerHTML = `<iframe style="border:none;" src="${localServerPromise.localServer}${basicUiPromise.basicUi}" width="${widthPromise.width + ''}"px height="${heightPromise.height + ''}"px></iframe>`;
+                });
+              }
+            });
+          });
+        });
+      });
+    });
   }
-)
+);
